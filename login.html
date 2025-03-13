@@ -23,7 +23,7 @@
             text-align: center;
         }
         input {
-            width: 100%;
+            width: 90%;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
@@ -38,7 +38,7 @@
             cursor: pointer;
         }
         .login-btn {
-            background: #28a745; 
+            background: #28a745;
         }
         .signup-btn {
             background: #007bff;
@@ -64,10 +64,10 @@
             <input v-if="!showLogin" type="email" v-model="email" placeholder="Email">
 
             <p class="error" v-if="errorMessage">{{ errorMessage }}</p>
-            
+
             <button v-if="showLogin" class="login-btn" @click="login">Login</button>
             <button v-else class="signup-btn" @click="signup">Sign Up</button>
-            
+
             <button class="switch-btn" @click="toggleForm">
                 {{ showLogin ? "Go to Sign Up" : "Go to Login" }}
             </button>
@@ -92,9 +92,9 @@
                         const response = await fetch("http://127.0.0.1:5000/login", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ 
-                                username: this.username, 
-                                password: this.password 
+                            body: JSON.stringify({
+                                username: this.username,
+                                password: this.password
                             }),
                         });
 
@@ -122,8 +122,8 @@
                         const response = await fetch("http://127.0.0.1:5000/signup", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ 
-                                username: this.username, 
+                            body: JSON.stringify({
+                                username: this.username,
                                 password: this.password,
                                 email: this.email
                             }),
