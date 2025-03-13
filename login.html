@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Login & Signup</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .login-btn {
+            background: #28a745; 
+        }
+        .signup-btn {
+            background: #007bff;
+        }
+        .switch-btn {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div class="container">
+            <h2 v-if="showLogin">Login</h2>
+            <h2 v-else>Sign Up</h2>
+            <input type="text" v-model="username" placeholder="Username">
+            <input type="password" v-model="password" placeholder="Password">
+
+            <input v-if="!showLogin" type="email" v-model="email" placeholder="Email">
+
+            <p class="error" v-if="errorMessage">{{ errorMessage }}</p>
+            
+            <button v-if="showLogin" class="login-btn" @click="login">Login</button>
+            <button v-else class="signup-btn" @click="signup">Sign Up</button>
+            
+            <button class="switch-btn" @click="toggleForm">
+                {{ showLogin ? "Go to Sign Up" : "Go to Login" }}
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    showLogin: true, // Toggle between login and signup
+                    username: "",
+                    password: "",
+                    email: "",
+                    errorMessage: ""
+                };
+            },
+
+            methods: {
+                async login() {
+                    try {
+                        const response = await fetch("http://127.0.0.1:5000/login", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ 
+                                username: this.username, 
+                                password: this.password 
+                            }),
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            alert(data.message);
+                        } else {
+                            this.errorMessage = data.message;
+                            setTimeout(() => {
+                                this.errorMessage = "";
+                            }, 1000);
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        this.errorMessage = "Server error. Please try again.";
+                        setTimeout(() => {
+                            this.errorMessage = "";
+                        }, 1000);
+                    }
+                },
+
+                async signup() {
+                    try {
+                        const response = await fetch("http://127.0.0.1:5000/signup", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ 
+                                username: this.username, 
+                                password: this.password,
+                                email: this.email
+                            }),
+                        });
+
+                        const data = await response.json();
+
+                        if (response.ok) {
+                            alert("Sign-up successful! You can now log in.");
+                            this.toggleForm(); // Switch back to login
+                        } else {
+                            this.errorMessage = data.message;
+                        }
+                    } catch (error) {
+                        console.error("Error:", error);
+                        this.errorMessage = "Server error. Please try again.";
+                    }
+                },
+
+                toggleForm() {
+                    this.showLogin = !this.showLogin;
+                    this.errorMessage = "";
+                    this.username = "";
+                    this.password = "";
+                    this.email = "";
+                }
+            }
+        });
+
+        app.mount("#app");
+    </script>
+</body>
+</html>
